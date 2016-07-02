@@ -90,11 +90,13 @@ trait IntegerPreferenceDescriptor extends PreferenceDescriptor[Int] {
 
 object AllPreferences {
   val preferences: List[PreferenceDescriptor[_]] = List(
-    RewriteArrowSymbols, IndentSpaces, SpaceBeforeColon, CompactStringConcatenation,
-    PreserveSpaceBeforeArguments, AlignParameters, AlignArguments, DoubleIndentClassDeclaration, FormatXml, IndentPackageBlocks,
-    AlignSingleLineCaseStatements, AlignSingleLineCaseStatements.MaxArrowIndent, IndentLocalDefs, PreserveDanglingCloseParenthesis, DanglingCloseParenthesis,
+    RewriteArrowSymbols, IndentSpaces, SpaceBeforeColon, SpaceBeforeContextColon, CompactStringConcatenation,
+    PreserveSpaceBeforeArguments, AlignParameters, FirstParameterOnNewline, AlignArguments, FirstArgumentOnNewline,
+    DoubleIndentClassDeclaration, FormatXml, IndentPackageBlocks, AlignSingleLineCaseStatements,
+    AlignSingleLineCaseStatements.MaxArrowIndent, IndentLocalDefs, PreserveDanglingCloseParenthesis, DanglingCloseParenthesis,
     SpaceInsideParentheses, SpaceInsideBrackets, SpacesWithinPatternBinders, MultilineScaladocCommentsStartOnFirstLine, IndentWithTabs,
-    CompactControlReadability, PlaceScaladocAsterisksBeneathSecondAsterisk, SpacesAroundMultiImports
+    CompactControlReadability, PlaceScaladocAsterisksBeneathSecondAsterisk, DoubleIndentMethodDeclaration, SpacesAroundMultiImports,
+    NewlineAtEndOfFile
   )
 
   val preferencesByKey: Map[String, PreferenceDescriptor[_]] =
@@ -122,6 +124,12 @@ case object SpaceBeforeColon extends BooleanPreferenceDescriptor {
   val defaultValue = false
 }
 
+case object SpaceBeforeContextColon extends BooleanPreferenceDescriptor {
+  val key = "spaceBeforeContextColon"
+  val description = "Add a space before colons in context bounds"
+  val defaultValue = false
+}
+
 case object CompactStringConcatenation extends BooleanPreferenceDescriptor {
   val key = "compactStringConcatenation"
   val description = "Omit spaces when formatting a '+' operator on String literals"
@@ -140,15 +148,33 @@ case object AlignParameters extends BooleanPreferenceDescriptor {
   val defaultValue = false
 }
 
+case object FirstParameterOnNewline extends IntentPreferenceDescriptor {
+  val key = "firstParameterOnNewline"
+  val description = "Places the first parameter in function or class definitions on a new line"
+  val defaultValue = Force
+}
+
 case object AlignArguments extends BooleanPreferenceDescriptor {
   val key = "alignArguments"
   val description = "Align method arguments on different lines in the same column"
   val defaultValue = false
 }
 
+case object FirstArgumentOnNewline extends IntentPreferenceDescriptor {
+  val key = "firstArgumentOnNewline"
+  val description = "Places the first argument to functions calls on a new line"
+  val defaultValue = Force
+}
+
 case object DoubleIndentClassDeclaration extends BooleanPreferenceDescriptor {
   val key = "doubleIndentClassDeclaration"
   val description = "Double indent either a class's parameters or its inheritance list"
+  val defaultValue = false
+}
+
+case object DoubleIndentMethodDeclaration extends BooleanPreferenceDescriptor {
+  val key = "doubleIndentMethodDeclaration"
+  val description = "Double indent a method's parameters, if they span multiple lines"
   val defaultValue = false
 }
 
@@ -194,7 +220,7 @@ case object PreserveDanglingCloseParenthesis extends BooleanPreferenceDescriptor
 case object DanglingCloseParenthesis extends IntentPreferenceDescriptor {
   val key = "danglingCloseParenthesis"
   val description = "Put a newline before a ')' in an argument expression"
-  val defaultValue = Force
+  val defaultValue = Prevent
 }
 
 case object SpaceInsideParentheses extends BooleanPreferenceDescriptor {
@@ -242,5 +268,11 @@ case object PlaceScaladocAsterisksBeneathSecondAsterisk extends BooleanPreferenc
 case object SpacesAroundMultiImports extends BooleanPreferenceDescriptor {
   val key = "spacesAroundMultiImports"
   val description = "Place spaces around multi imports (import a.{ b, c, d }"
+  val defaultValue = true
+}
+
+case object NewlineAtEndOfFile extends BooleanPreferenceDescriptor {
+  val key = "newlineAtEndOfFile"
+  val description = "Add a newline at the end of all files"
   val defaultValue = false
 }

@@ -99,6 +99,48 @@ class CommentFormatterTest extends AbstractFormatterTest {
     | */
     |"""
 
+  """/**
+    | * Trailing whitespace on this line and the line below should be stripped.\u0020\u0020
+    | *\u0020\u0020\u0020\u0020
+    | */
+    |""" ==>
+  """/**
+    | * Trailing whitespace on this line and the line below should be stripped.
+    | *
+    | */
+    |"""
+
+  """// Trailing whitespace in single-line comments should be stripped.\u0020\u0020
+    |//\u0020\u0020
+    |""" ==>
+  """// Trailing whitespace in single-line comments should be stripped.
+    |//
+    |"""
+
+  """/* Normal multi-line comment.
+    | * Trailing whitespace here should be stripped.\u0020\u0020
+    | */
+    |""" ==>
+  """/* Normal multi-line comment.
+    | * Trailing whitespace here should be stripped.
+    | */
+    |"""
+
+  """/*\u0020
+    |   Comment with trailing whitespace above.
+    |
+    |   Indent should be preserved, whitespace trimmed, blank lines preserved.
+    |
+    |   Visible separation (space below) should be added.
+    | */""" ==>
+  """/*
+    |   Comment with trailing whitespace above.
+    |
+    |   Indent should be preserved, whitespace trimmed, blank lines preserved.
+    |
+    |   Visible separation (space below) should be added.
+    | */ """
+
   {
   implicit val formattingPreferences = FormattingPreferences.setPreference(MultilineScaladocCommentsStartOnFirstLine, true)
 
@@ -177,6 +219,17 @@ class CommentFormatterTest extends AbstractFormatterTest {
     | */""" ==>
   """/** This method applies f to each
     |  * element of the given list.
+    |  */
+    |"""
+
+  """/**
+    | * Scaladoc should be retained.
+    | * @param first line retains indent.
+    | *     second line retains indent.
+    | */""" ==>
+  """/** Scaladoc should be retained.
+    |  * @param first line retains indent.
+    |  *     second line retains indent.
     |  */
     |"""
 

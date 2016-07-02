@@ -1,9 +1,6 @@
 Scalariform
 ===========
 
-.. image:: https://travis-ci.org/daniel-trinh/scalariform.png?branch=master
-   :target: https://travis-ci.org/daniel-trinh/scalariform
-
 Scalariform is a code formatter for Scala. It's available as a
 library, a stand-alone command line tool, or via integrations with
 various editors and build tools (listed below).
@@ -43,21 +40,19 @@ sbt will build one jar with all the dependencies and put it in ::
 
 You can copy this to a location in your path and execute it as follows: ::
 
-   java -jar /home/me/bin/cli-assembly-$scalariform_version.jar -f -q +compactControlReadability +alignParameters +alignSingleLineCaseStatements +doubleIndentClassDeclaration +preserveDanglingCloseParenthesis +rewriteArrowSymbols +preserveSpaceBeforeArguments --stdout ~/myproject/src/main/scala/Stuff.scala > Stuff.scala
+   java -jar /home/me/bin/cli-assembly-$scalariform_version.jar -f -q +compactControlReadability +alignParameters +alignSingleLineCaseStatements +doubleIndentClassDeclaration +rewriteArrowSymbols +preserveSpaceBeforeArguments --stdout ~/myproject/src/main/scala/Stuff.scala > Stuff.scala
 
 Integration with sbt
 --------------------
 
-A version for sbt >= 0.13.x has been written by Peter Vlugter: https://github.com/daniel-trinh/sbt-scalariform
-
-Please see https://github.com/sbt/sbt-scalariform for older versions of sbt.
+A plugin for SBT is available at https://github.com/sbt/sbt-scalariform.
 
 Usage within a project
 ----------------------
 
 Have a use for the scalariform source code directly? You can use it as a build dependency: ::
 
-    "org.scalariform" %% "scalariform" % "0.2.0"
+    "org.scalariform" %% "scalariform" % "0.1.8"
 
 Integration with Eclipse
 ------------------------
@@ -135,11 +130,11 @@ While there is no specific Vim integration at present, you can use
 Scalariform as an external formatter for the ``gq`` command by adding
 the following to ``.vimrc`` ::
 
-  au BufEnter *.scala setl formatprg=java\ -jar\ /home/me/bin/scalariform.jar\ -f\ -q\ +compactControlReadability\ +alignParameters\ +alignSingleLineCaseStatements\ +doubleIndentClassDeclaration\ +preserveDanglingCloseParenthesis\ +rewriteArrowSymbols\ +preserveSpaceBeforeArguments\ --stdin\ --stdout
+  au BufEnter *.scala setl formatprg=java\ -jar\ /home/me/bin/scalariform.jar\ -f\ -q\ +compactControlReadability\ +alignParameters\ +alignSingleLineCaseStatements\ +doubleIndentClassDeclaration\ +rewriteArrowSymbols\ +preserveSpaceBeforeArguments\ --stdin\ --stdout
 
 Or, if you don't like escaping spaces, you can set up a mapping: ::
 
-    map ,st :%!java -jar /home/me/bin/scalariform.jar -f -q +compactControlReadability +alignParameters +alignSingleLineCaseStatements +doubleIndentClassDeclaration +preserveDanglingCloseParenthesis +rewriteArrowSymbols +preserveSpaceBeforeArguments --stdin --stdout <CR>
+    map ,st :%!java -jar /home/me/bin/scalariform.jar -f -q +compactControlReadability +alignParameters +alignSingleLineCaseStatements +doubleIndentClassDeclaration +rewriteArrowSymbols +preserveSpaceBeforeArguments --stdin --stdout <CR>
 
 You can create your own executable scalariform.jar by following the instructions at the top of this file, in "Packaging an executable JAR."
 
@@ -179,13 +174,12 @@ If ``true``, then:
 
 .. code:: scala
 
-  class Person(
-    name:             String,
-    age:              Int            = 24,
-    birthdate:        Date,
-    astrologicalSign: String         = "libra",
-    shoeSize:         Int,
-    favoriteColor:    java.awt.Color
+  class Person(name:             String,
+               age:              Int            = 24,
+               birthdate:        Date,
+               astrologicalSign: String         = "libra",
+               shoeSize:         Int,
+               favoriteColor:    java.awt.Color
   )
 
 This will also place the "implicit" keyword in parameters on its own line, whenever
@@ -212,6 +206,51 @@ If ``true``, then:
 
 This option is disabled if ``indentWithTabs`` is ``true``.
 
+firstParameterOnNewline
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Default: ``Force``
+
+Whether or not to place the first parameter for multi-line method or constructor definition on its own line.
+
+If ``Force``, first parameters will be on a new line:
+
+.. code:: scala
+
+  abstract class Person(
+    name: Int,
+    age: String
+  ) {
+    def livesIn(
+      city: String,
+      state: String
+    ): Boolean
+  }
+
+If ``Prevent``, first parameters will be on the definition line:
+
+.. code:: scala
+
+  abstract class Person(name: Int,
+    age: String
+  ) {
+    def livesIn(city: String,
+      state: String
+    ): Boolean
+  }
+
+If ``Preserve``, first parameters will stay where they are:
+
+.. code:: scala
+
+  abstract class Person(name: Int,
+    age: String
+  ) {
+    def livesIn(
+      city: String,
+      state: String
+    ): Boolean
+  }
 
 alignArguments
 ~~~~~~~~~~~~~~
@@ -234,15 +273,59 @@ If ``true``, then:
 
 .. code:: scala
 
-  Cake(
-    candles        = 10,
-    frostingFlavor = Vanilla,
-    layerFlavor    = Chocolate,
-    iceCream       = true
+  Cake(candles        = 10,
+       frostingFlavor = Vanilla,
+       layerFlavor    = Chocolate,
+       iceCream       = true
   )
 
 This option is disabled if ``indentWithTabs`` is ``true``.
 
+firstArgumentOnNewline
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Default: ``Force``
+
+Whether or not to place the first argument of multi-line function calls on its own line.
+
+If ``Force``, first arguments will be on a new line:
+
+.. code:: scala
+
+  foo(
+    1,
+    2
+  )
+
+  bar(
+    3,
+    4
+  )
+
+If ``Prevent``, first arguments will be on function call line:
+
+.. code:: scala
+
+  foo(1,
+    2
+  )
+
+  bar(3,
+    4
+  )
+
+If ``Preserve``, first arguments will stay where they are:
+
+.. code:: scala
+
+  foo(
+    1,
+    2
+  )
+
+  bar(3,
+    4
+  )
 
 alignSingleLineCaseStatements
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -387,6 +470,29 @@ Or:
 
 .. _recommended: http://docs.scala-lang.org/style/declarations.html#classes
 
+doubleIndentMethodDeclaration
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Default: ``false``
+
+With this set to ``true``, method declarations will have an extra indentation
+added to their parameter list, if it spans multiple lines.
+This provides a visual distinction from the method body. For example::
+
+  def longMethodNameIsLong(paramOneNameIsLong: String, paramTwo: String,
+      paramThreeNameIsReallyLong): Unit = {
+    val startOfMethod = ...
+  }
+
+Or::
+
+  def longMethodNameIsLong(
+      paramOneNameIsLong: String,
+      paramTwoNameIsLong: String,
+      paramThreeNameIsLong): Unit = {
+    val startOfMethod = ...
+  }
+
 formatXml
 ~~~~~~~~~
 
@@ -481,6 +587,13 @@ If ``false``, start the comment body on a separate line below the opening delimi
    * element of the given list.
    */
 
+newlineAtEndOfFile
+~~~~~~~~~~~~~~~~~~
+
+Default: ``false``
+
+If ``true``, newlines will be added at the end of all formatted files.
+
 placeScaladocAsterisksBeneathSecondAsterisk
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -520,7 +633,7 @@ Otherwise, if ``false``, spaces before arguments will always be removed.
 danglingCloseParenthesis
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Default: ``Force``
+Default: ``Prevent``
 
 If ``Force``, any closing parentheses will be set to dangle. For example:
 
@@ -583,17 +696,34 @@ spaceBeforeColon
 
 Default: ``false``
 
-Whether to ensure a space before colon. For example, if ``false``, then:
+Whether to ensure a space before all single colons. For example, if ``false``, then:
 
 .. code:: scala
 
-  def add(a: Int, b: Int): Int = a + b
+  def add[T: Numeric](a: T, b: T): Int = implictly[Numeric[T]].plus(a, b)
 
 If ``true``, then:
 
 .. code:: scala
 
-  def add(a : Int, b : Int) : Int = a + b
+  def add[T : Numeric](a : T, b : T): Int = implictly[Numeric[T]].plus(a, b)
+
+spaceBeforeContextColon
+~~~~~~~~~~~~~~~~
+
+Default: ``false``
+
+Whether to ensure a space before colons in context bounds (the typeclass pattern). For example, if ``false``, then:
+
+.. code:: scala
+
+  def newArray[T: ClassManifest](n: Int) = new Array[T](n)
+
+If ``true``, then:
+
+.. code:: scala
+
+  def newArray[T : ClassManifest](n: Int) = new Array[T](n)
 
 spaceInsideBrackets
 ~~~~~~~~~~~~~~~~~~~
@@ -649,7 +779,7 @@ If ``false``,:
 spacesAroundMultiImports
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Default: ``false``
+Default: ``true``
 
 Whether or not to add spaces around multi-imports.
 For example, if ``false``, then:
@@ -666,11 +796,7 @@ If ``true``, then:
   import a.{ b, c, d }
   import foo.{ bar => baz }
 
-Older versions of `Scalariform` used ``true``,
-but the standard Scala formatting requires ``false``.
-
-See the examples given in "Chapter 13 - Packages and Imports.", page 244 of *Programming in Scala*
-2nd ed. (2010) by Odersky, Spoon and Venners.
+Compatibility note: Versions 0.1.6 & 0.1.7 of `Scalariform` used ``false``.
 
 Scala Style Guide
 ~~~~~~~~~~~~~~~~~

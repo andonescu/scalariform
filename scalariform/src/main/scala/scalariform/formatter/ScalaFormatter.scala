@@ -40,7 +40,12 @@ abstract class ScalaFormatter extends HasFormattingPreferences with TypeFormatte
     var result = format(topStats)
     for (firstStat ← topStats.firstStatOpt)
       result = result.before(firstStat.firstToken, EnsureNewlineAndIndent(0))
-    result
+
+    if (formattingPreferences(NewlineAtEndOfFile)) {
+      result.before(compilationUnit.eofToken, EnsureNewlineAndIndent(0))
+    } else {
+      result
+    }
   }
 
   /**
@@ -194,16 +199,16 @@ abstract class ScalaFormatter extends HasFormattingPreferences with TypeFormatte
           val commentIndentLevel = if (nextTokenUnindents) indentLevel + 1 else indentLevel
           for ((previousOpt, hiddenToken, nextOpt) ← Utils.withPreviousAndNext(hiddenTokens)) {
             hiddenToken match {
-              case ScalaDocComment(token) ⇒
+              case ScalaDocComment(_) ⇒
                 builder.ensureAtBeginningOfLine()
                 builder.indent(commentIndentLevel, baseIndentOption)
-                builder.append(formatComment(hiddenToken, commentIndentLevel))
+                builder.append(formatScaladocComment(hiddenToken, commentIndentLevel))
               case SingleLineComment(_) | MultiLineComment(_) ⇒
                 if (builder.atBeginningOfLine)
                   builder.indent(commentIndentLevel, baseIndentOption)
                 else if (builder.atVisibleCharacter) // Separation from previous visible token
                   builder.append(" ")
-                builder.write(hiddenToken)
+                builder.append(formatNonScaladocComment(hiddenToken, commentIndentLevel))
               case Whitespace(token) ⇒
                 val newlineCount = token.text.count(_ == '\n')
                 val newlinesToWrite = previousOpt match {
@@ -267,7 +272,6 @@ abstract class ScalaFormatter extends HasFormattingPreferences with TypeFormatte
       val actualReplacementOption = replacementOption orElse (condOpt(token.tokenType) {
         case ARROW if rewriteArrows  ⇒ "⇒"
         case LARROW if rewriteArrows ⇒ "←"
-        case RARROW if rewriteArrows ⇒ "→"
         case EOF                     ⇒ ""
       })
       builder.append(actualReplacementOption getOrElse token.rawText)
@@ -443,7 +447,7 @@ object ScalaFormatter {
     RETURN, SEALED, /* SUPER, THIS, */
     THROW, TRAIT, TRY, /* TYPE ,*/
     VAL, VAR, WHILE, WITH, YIELD,
-    /* USCORE, */ COLON, EQUALS, ARROW, LARROW, RARROW, SUBTYPE, VIEWBOUND, SUPERTYPE, /* HASH, AT */
+    /* USCORE, */ COLON, EQUALS, ARROW, LARROW, SUBTYPE, VIEWBOUND, SUPERTYPE, /* HASH, AT */
     LBRACE, SEMI)
 
   val ENSURE_SPACE_BEFORE = Set(
@@ -455,7 +459,7 @@ object ScalaFormatter {
     /* RETURN, */ SEALED, /* SUPER, THIS, */
     /* THROW, */ TRAIT, /* TRY, TYPE, */
     VAL, VAR, /* WHILE, */ WITH, YIELD,
-    /* USCORE, COLON, */ EQUALS, /* ARROW, */ LARROW, RARROW, SUBTYPE, VIEWBOUND, SUPERTYPE, /*, HASH, AT, */
+    /* USCORE, COLON, */ EQUALS, /* ARROW, */ LARROW, SUBTYPE, VIEWBOUND, SUPERTYPE, /*, HASH, AT, */
     RBRACE)
   // format: ON
 
