@@ -23,8 +23,7 @@ class DoubleIndentClassDeclaration extends AbstractFormatterTest {
     |    with Serializable""" ==>
   """class Person(
     |    name: String,
-    |    age: Int
-    |)
+    |    age: Int)
     |  extends Entity
     |  with Logging
     |  with Identifiable
@@ -37,8 +36,7 @@ class DoubleIndentClassDeclaration extends AbstractFormatterTest {
     |}""" ==>
   """class Person(
     |    name: String,
-    |    age: Int
-    |) {
+    |    age: Int) {
     |  def firstMethod = 42
     |}"""
 
@@ -65,8 +63,7 @@ class DoubleIndentClassDeclaration extends AbstractFormatterTest {
     |}""" ==>
   """class Person(
     |    name: String,
-    |    age: Int
-    |)
+    |    age: Int)
     |  extends Entity {
     |  def method() = 42
     |}"""
@@ -88,8 +85,7 @@ class DoubleIndentClassDeclaration extends AbstractFormatterTest {
     |    extends Entity with Logging""" ==>
   """class Person(
     |    name: String,
-    |    age: Int
-    |)
+    |    age: Int)
     |  extends Entity with Logging"""
 
 }
